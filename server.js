@@ -49,12 +49,16 @@ const incomeRoutes = require("./routes/income");
 const expenseRoutes = require("./routes/expenses");
 const categoryRoutes = require("./routes/categories");
 const subcategoryRoutes = require("./routes/subcategories");
+const accountRoutes = require('./routes/accounts');
+const budgetRoutes = require('./routes/budgets');
 
 app.use("/api/auth", authRoutes);
 app.use("/api/income", incomeRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subcategoryRoutes);
+app.use('/api/accounts', accountRoutes);
+app.use('/api/budgets', budgetRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
