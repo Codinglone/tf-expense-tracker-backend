@@ -47,11 +47,13 @@ app.get('/', (req, res) => {
 
   // Import routes
 const authRoutes = require('./routes/auth');
-const transactionRoutes = require('./routes/transactions');
+const incomeRoutes = require('./routes/income');
+const expenseRoutes = require('./routes/expenses');
 
 // Use routes
 app.use('/api/auth', authRoutes);
-app.use('/api/transactions', transactionRoutes);
+app.use('/api/income', incomeRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 // Start the server
 app.listen(PORT, () => {
