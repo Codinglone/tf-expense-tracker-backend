@@ -5,7 +5,7 @@ const expenseSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   category: { type: String },
   subcategory: { type: String },
-  account: { type: String, required: true },
+  accountId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true },
   date: { type: Date, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
