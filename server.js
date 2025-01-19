@@ -49,11 +49,16 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/auth');
 const incomeRoutes = require('./routes/income');
 const expenseRoutes = require('./routes/expenses');
+const categoryRoutes = require('./routes/categories');
+const subcategoryRoutes = require('./routes/subcategories');
+
 
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/income', incomeRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/subcategories', subcategoryRoutes);
 
 // Start the server
 app.listen(PORT, () => {
