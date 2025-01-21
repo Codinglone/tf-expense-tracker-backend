@@ -11,22 +11,22 @@ const incomeSchema = new mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'IncomeCategory',  // Make sure this matches your category model name
+    ref: 'IncomeCategory',
     required: true
   },
   subcategory: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'IncomeCategory.subcategories',  // Reference to subdocument
+    ref: 'IncomeCategory.subcategories',
     required: true
   },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Account',  // Make sure this matches your account model name
+    ref: 'Account',
     required: true
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',  // Make sure this matches your user model name
+    ref: 'User',
     required: true
   },
   date: {

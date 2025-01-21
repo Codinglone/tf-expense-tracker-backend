@@ -5,7 +5,6 @@ const Expense = require('../models/Expense');
 const authMiddleware = require('../middleware/authMiddleware');
 
 
-// Helper function to calculate budget spending
 async function calculateBudgetSpending(budget) {
   const expenses = await Expense.find({
     userId: budget.userId,
@@ -25,7 +24,7 @@ router.get('/', authMiddleware, async (req, res) => {
     const budgets = await Budget.find({ userId: req.user.id })
       .populate('accountId')
       .sort('-createdAt');
-    
+
     res.json(budgets);
   } catch (err) {
     console.error('Error fetching budgets:', err);
@@ -74,17 +73,17 @@ router.get('/check-status/:id', authMiddleware, async (req, res) => {
     if (!budget) {
       return res.status(404).json({ message: 'Budget not found' });
     }
-    
+
     const spent = await calculateBudgetSpending(budget);
     const percentageUsed = (spent / budget.amount) * 100;
-    
+
     // Update budget status if exceeded
     if (percentageUsed >= 100 && budget.status !== 'exceeded') {
       budget.status = 'exceeded';
       await budget.save();
     }
 
-    res.json({ 
+    res.json({
       exceeded: percentageUsed >= budget.alertThreshold,
       percentageUsed,
       spent,

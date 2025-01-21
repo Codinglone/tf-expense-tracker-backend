@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Expense = require('../models/Expense');
 const Category = require('../models/Category');
-const Budget = require('../models/Budget'); // Add this
+const Budget = require('../models/Budget');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Helper function to update budget
@@ -82,9 +82,9 @@ router.post('/', authMiddleware, async (req, res) => {
       date: req.body.date,
       userId: req.user.id
     });
-    
+
     const savedExpense = await expense.save();
-    
+
     // Find active budget for this account and date
     const budget = await Budget.findOne({
       userId: req.user.id,
@@ -95,12 +95,12 @@ router.post('/', authMiddleware, async (req, res) => {
     }).populate('accountId', 'name');
 
     let notification = null;
-    
+
     if (budget) {
       // Update the spent amount directly
       budget.spent += Number(expense.amount);
       const percentageUsed = (budget.spent / budget.amount) * 100;
-      
+
       if (percentageUsed >= 100) {
         budget.status = 'exceeded';
         notification = {
@@ -115,7 +115,7 @@ router.post('/', authMiddleware, async (req, res) => {
           type: 'warning'
         };
       }
-      
+
       await budget.save();
     }
 
@@ -146,7 +146,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Expense not found' });
     }
 
-    // Find the category by name
     const categoryDoc = await Category.findOne({
       name: category,
       userId: req.user.id
@@ -156,13 +155,11 @@ router.put('/:id', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'Invalid category' });
     }
 
-    // Find the subcategory within the category
     const subcategoryDoc = categoryDoc.subcategories.find(sub => sub.name === subcategory);
     if (!subcategoryDoc) {
       return res.status(400).json({ message: 'Invalid subcategory' });
     }
 
-    // Calculate the difference in amount
     const amountDifference = amount - originalExpense.amount;
 
     const updatedExpense = await Expense.findByIdAndUpdate(
@@ -210,39 +207,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Delete expense
-router.delete('/:id', authMiddleware, async (req, res) => {
-  try {
-    const expense = await Expense.findById(req.params.id);
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
 
-    // Update budget before deleting expense
-    const budget = await Budget.findOne({
-      userId: req.user.id,
-      accountId: expense.accountId,
-      startDate: { $lte: expense.date },
-      endDate: { $gte: expense.date },
-      status: { $ne: 'inactive' }
-    });
-
-    if (budget) {
-      const newSpent = budget.spent - expense.amount;
-      budget.spent = newSpent;
-      const percentageUsed = (newSpent / budget.amount) * 100;
-      if (percentageUsed < 100 && budget.status === 'exceeded') {
-        budget.status = 'active';
-      }
-      await budget.save();
-    }
-
-    await expense.deleteOne();
-    res.json({ message: 'Expense deleted' });
-  } catch (err) {
-    console.error('Error deleting expense:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const express = require('express');
-const Income = require('../models/Income');  
+const Income = require('../models/Income');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -8,8 +8,8 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const incomes = await Income.find({ userId: req.user.id })
-      .populate('category')  // Populate the full category
-      .populate('accountId')  // Populate the account
+      .populate('category')
+      .populate('accountId')
       .lean()
       .exec();
 
@@ -40,10 +40,9 @@ router.post('/', authMiddleware, async (req, res) => {
   const { description, amount, accountId, category, subcategory, date } = req.body;
 
   try {
-    // Validate required fields
     if (!description || !amount || !accountId || !category || !subcategory || !date) {
-      return res.status(400).json({ 
-        message: 'All fields are required (description, amount, accountId, category, subcategory, date)' 
+      return res.status(400).json({
+        message: 'All fields are required (description, amount, accountId, category, subcategory, date)'
       });
     }
 
@@ -58,8 +57,7 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     await newIncome.save();
-    
-    // Populate after finding the saved document
+
     const populatedIncome = await Income.findById(newIncome._id)
       .populate('accountId', 'name type')
       .populate('category', 'name')
@@ -68,10 +66,9 @@ router.post('/', authMiddleware, async (req, res) => {
     res.status(201).json(populatedIncome);
   } catch (err) {
     console.error('Error creating income:', err);
-    // Send more detailed error message
-    res.status(500).json({ 
-      message: 'Server error', 
-      error: err.message 
+    res.status(500).json({
+      message: 'Server error',
+      error: err.message
     });
   }
 });

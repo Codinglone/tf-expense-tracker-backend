@@ -36,8 +36,7 @@ const expenseSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Add a pre-find middleware to handle invalid ObjectIds
-expenseSchema.pre('find', function(next) {
+expenseSchema.pre('find', function (next) {
   const query = this.getQuery();
   if (query.category && !mongoose.Types.ObjectId.isValid(query.category)) {
     query.category = null;

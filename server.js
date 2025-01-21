@@ -43,7 +43,6 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Import routes
 const authRoutes = require("./routes/auth");
 const incomeRoutes = require("./routes/income");
 const expenseRoutes = require("./routes/expenses");
