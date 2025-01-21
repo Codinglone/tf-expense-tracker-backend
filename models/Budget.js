@@ -5,6 +5,10 @@ const budgetSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  spent: {
+    type: Number,
+    default: 0
+  },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Account',
@@ -36,9 +40,19 @@ const budgetSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
+    enum: ['active', 'inactive', 'exceeded'],
     default: 'active'
   }
 }, { timestamps: true });
+
+budgetSchema.methods.checkStatus = function() {
+  const percentageUsed = (this.spent / this.amount) * 100;
+  return {
+    percentageUsed,
+    isExceeded: percentageUsed >= 100,
+    isNearThreshold: percentageUsed >= this.alertThreshold,
+    remaining: this.amount - this.spent
+  };
+};
 
 module.exports = mongoose.model('Budget', budgetSchema);

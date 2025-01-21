@@ -7,7 +7,7 @@ const subcategorySchema = new mongoose.Schema({
   }
 });
 
-const categorySchema = new mongoose.Schema({
+const incomeCategorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -22,4 +22,4 @@ const categorySchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Category', categorySchema);
+module.exports = mongoose.model('IncomeCategory', incomeCategorySchema);
